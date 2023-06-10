@@ -1,0 +1,31 @@
+{
+  "name": "my-app",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev:server": "ts-node ./src/index.ts",
+    "dev:worker": "ts-node ./src/index-worker.ts",
+    "dev": "concurrently yarn:dev:*",
+    "build": "tsc",
+    "start:server": "node ./dist/index.js",
+    "start:worker": "node ./dist/index-worker.js",
+    "start": "concurrently yarn:start:*",
+    "migration:generate": "ts-node migration generate",
+    "migration:run": "ts-node migration run",
+    "migration:revert": "ts-node migration revert"
+  },
+  "dependencies": {
+    "@vendure/admin-ui-plugin": "2.0.0",
+    "@vendure/asset-server-plugin": "2.0.0",
+    "@vendure/core": "2.0.0",
+    "@vendure/email-plugin": "2.0.0",
+    "@vendure/ui-devkit": "^2.0.0",
+    "dotenv": "16.1.4",
+    "mysql": "2.18.1",
+    "typescript": "4.9.5"
+  },
+  "devDependencies": {
+    "concurrently": "8.1.0",
+    "ts-node": "10.9.1"
+  }
+}
