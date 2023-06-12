@@ -22,3 +22,8 @@ export interface CreateSellerInput {
   password: string;
   customFields: SellerCustomFields;
 }
+export type CreateAssetInput = {
+  file: any;
+  tags?: string;
+  customFields?: JSON;
+};

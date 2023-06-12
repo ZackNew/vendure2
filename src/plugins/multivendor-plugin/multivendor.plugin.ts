@@ -1,3 +1,4 @@
+import path from "path";
 import { OnApplicationBootstrap } from "@nestjs/common";
 import {
   Channel,
@@ -12,6 +13,7 @@ import {
   VendurePlugin,
 } from "@vendure/core";
 
+import { AdminUiExtension } from "@vendure/ui-devkit/compiler";
 import { shopApiExtensions } from "./api/api-extensions";
 import { MultivendorResolver } from "./api/mv.resolver";
 import { multivendorOrderProcess } from "./config/mv-order-process";
@@ -150,7 +152,9 @@ import { MultivendorPluginOptions } from "./types";
       },
       {
         name: "phoneNumberOffice",
-        label: [{ languageCode: LanguageCode.en, value: "" }],
+        label: [
+          { languageCode: LanguageCode.en, value: "Office Phone Number" },
+        ],
         description: [
           {
             languageCode: LanguageCode.en,
@@ -162,7 +166,9 @@ import { MultivendorPluginOptions } from "./types";
       },
       {
         name: "phoneNumberMobile",
-        label: [{ languageCode: LanguageCode.en, value: "" }],
+        label: [
+          { languageCode: LanguageCode.en, value: "Mobile Phone Number" },
+        ],
         description: [
           {
             languageCode: LanguageCode.en,
@@ -174,7 +180,7 @@ import { MultivendorPluginOptions } from "./types";
       },
       {
         name: "city",
-        label: [{ languageCode: LanguageCode.en, value: "" }],
+        label: [{ languageCode: LanguageCode.en, value: "City" }],
         description: [
           {
             languageCode: LanguageCode.en,
@@ -186,7 +192,7 @@ import { MultivendorPluginOptions } from "./types";
       },
       {
         name: "subCity",
-        label: [{ languageCode: LanguageCode.en, value: "" }],
+        label: [{ languageCode: LanguageCode.en, value: "Subcity" }],
         description: [
           {
             languageCode: LanguageCode.en,
@@ -198,7 +204,7 @@ import { MultivendorPluginOptions } from "./types";
       },
       {
         name: "woreda",
-        label: [{ languageCode: LanguageCode.en, value: "" }],
+        label: [{ languageCode: LanguageCode.en, value: "Woreda" }],
         description: [
           {
             languageCode: LanguageCode.en,
@@ -210,7 +216,7 @@ import { MultivendorPluginOptions } from "./types";
       },
       {
         name: "houseNumber",
-        label: [{ languageCode: LanguageCode.en, value: "" }],
+        label: [{ languageCode: LanguageCode.en, value: "House Number" }],
         description: [
           {
             languageCode: LanguageCode.en,
@@ -222,7 +228,7 @@ import { MultivendorPluginOptions } from "./types";
       },
       {
         name: "vatCertificate",
-        label: [{ languageCode: LanguageCode.en, value: "" }],
+        label: [{ languageCode: LanguageCode.en, value: "Vat Certificate" }],
         description: [
           {
             languageCode: LanguageCode.en,
@@ -231,10 +237,11 @@ import { MultivendorPluginOptions } from "./types";
         ],
         type: "string",
         public: false,
+        ui: { tab: "Legal Documents" },
       },
       {
         name: "tinCertificate",
-        label: [{ languageCode: LanguageCode.en, value: "" }],
+        label: [{ languageCode: LanguageCode.en, value: "Tin Certificate" }],
         description: [
           {
             languageCode: LanguageCode.en,
@@ -243,10 +250,16 @@ import { MultivendorPluginOptions } from "./types";
         ],
         type: "string",
         public: false,
+        ui: { tab: "Legal Documents" },
       },
       {
         name: "businessRegistrationCertificate",
-        label: [{ languageCode: LanguageCode.en, value: "" }],
+        label: [
+          {
+            languageCode: LanguageCode.en,
+            value: "Business Registration Certificate",
+          },
+        ],
         description: [
           {
             languageCode: LanguageCode.en,
@@ -255,10 +268,11 @@ import { MultivendorPluginOptions } from "./types";
         ],
         type: "string",
         public: false,
+        ui: { tab: "Legal Documents" },
       },
       {
         name: "businessLicence",
-        label: [{ languageCode: LanguageCode.en, value: "" }],
+        label: [{ languageCode: LanguageCode.en, value: "Business Licence" }],
         description: [
           {
             languageCode: LanguageCode.en,
@@ -267,21 +281,23 @@ import { MultivendorPluginOptions } from "./types";
         ],
         type: "string",
         public: false,
-      },
-      {
-        name: "isApproved",
-        label: [{ languageCode: LanguageCode.en, value: "Approved" }],
-        description: [
-          {
-            languageCode: LanguageCode.en,
-            value: "Is this seller approved by Superadmin",
-          },
-        ],
-        type: "boolean",
-        public: false,
-        defaultValue: false,
+        ui: { tab: "Legal Documents" },
       }
     );
+    config.customFields.Administrator.push({
+      name: "isApproved",
+      label: [{ languageCode: LanguageCode.en, value: "Approved" }],
+      description: [
+        {
+          languageCode: LanguageCode.en,
+          value: "Is this admin approved by Superadmin",
+        },
+      ],
+      type: "boolean",
+      public: false,
+      defaultValue: false,
+      ui: { component: "is-approved" },
+    });
     config.paymentOptions.paymentMethodHandlers.push(
       multivendorPaymentMethodHandler
     );
@@ -367,4 +383,15 @@ export class MultivendorPlugin implements OnApplicationBootstrap {
       );
     }
   }
+
+  static uiExtensions: AdminUiExtension = {
+    extensionPath: path.join(__dirname, "ui"),
+    ngModules: [
+      {
+        type: "shared" as const,
+        ngModuleFileName: "shared-extension.module.ts",
+        ngModuleName: "AdminSellerSharedExtensionModule",
+      },
+    ],
+  };
 }

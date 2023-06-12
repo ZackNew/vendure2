@@ -1,3 +1,4 @@
+import { createWriteStream, ReadStream } from "fs";
 import { Injectable } from "@nestjs/common";
 import {
   CreateAdministratorInput,
@@ -27,7 +28,7 @@ import {
 } from "@vendure/core";
 
 import { multivendorShippingEligibilityChecker } from "../config/mv-shipping-eligibility-checker";
-import { CreateSellerInput } from "../types";
+import { CreateAssetInput, CreateSellerInput } from "../types";
 
 @Injectable()
 export class MultivendorService {
@@ -196,27 +197,27 @@ export class MultivendorService {
       channelIds: [channel.id],
       description: `Administrator of ${input.shopName}`,
       permissions: [
-        Permission.CreateCatalog,
-        Permission.UpdateCatalog,
-        Permission.ReadCatalog,
-        Permission.DeleteCatalog,
-        Permission.CreateOrder,
-        Permission.ReadOrder,
-        Permission.UpdateOrder,
-        Permission.DeleteOrder,
-        Permission.ReadCustomer,
-        Permission.ReadPaymentMethod,
-        Permission.ReadShippingMethod,
-        Permission.ReadPromotion,
-        Permission.ReadCountry,
-        Permission.ReadZone,
-        Permission.CreateCustomer,
-        Permission.UpdateCustomer,
-        Permission.DeleteCustomer,
-        Permission.CreateTag,
-        Permission.ReadTag,
-        Permission.UpdateTag,
-        Permission.DeleteTag,
+        // Permission.CreateCatalog,
+        // Permission.UpdateCatalog,
+        // Permission.ReadCatalog,
+        // Permission.DeleteCatalog,
+        // Permission.CreateOrder,
+        // Permission.ReadOrder,
+        // Permission.UpdateOrder,
+        // Permission.DeleteOrder,
+        // Permission.ReadCustomer,
+        // Permission.ReadPaymentMethod,
+        // Permission.ReadShippingMethod,
+        // Permission.ReadPromotion,
+        // Permission.ReadCountry,
+        // Permission.ReadZone,
+        // Permission.CreateCustomer,
+        // Permission.UpdateCustomer,
+        // Permission.DeleteCustomer,
+        // Permission.CreateTag,
+        // Permission.ReadTag,
+        // Permission.UpdateTag,
+        // Permission.DeleteTag,
       ],
     });
     const administrator = await this.administratorService.create(ctx, {
@@ -245,5 +246,19 @@ export class MultivendorService {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
       user: superAdminUser!,
     });
+  }
+
+  async uploadImage(
+    ctx: RequestContext,
+    input: CreateAssetInput
+  ): Promise<String> {
+    const { createReadStream, filename } = await input.file;
+    const readStream = createReadStream() as ReadStream;
+    let filePath = `/assets/sellers/${Math.random()
+      .toString(36)
+      .slice(2, 7)}_${filename}`;
+    const ws = createWriteStream(`./static${filePath}`);
+    readStream.pipe(ws);
+    return filePath;
   }
 }

@@ -8,6 +8,12 @@ export const shopApiExtensions = gql`
     password: String!
   }
 
+  input SellerImagesInput {
+    file: Upload!
+    tags: String
+    customFields: String
+  }
+
   input RegisterSellerInput {
     shopName: String!
     seller: CreateSellerInput!
@@ -15,5 +21,9 @@ export const shopApiExtensions = gql`
 
   extend type Mutation {
     registerNewSeller(input: RegisterSellerInput!): Channel
+  }
+
+  extend type Mutation {
+    uploadSellerImages(input: SellerImagesInput!): String
   }
 `;

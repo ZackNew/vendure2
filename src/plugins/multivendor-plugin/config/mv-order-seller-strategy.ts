@@ -28,6 +28,16 @@ import { MultivendorPluginOptions } from "../types";
 declare module "@vendure/core/dist/entity/custom-entity-fields" {
   interface CustomSellerFields {
     connectedAccountId: string;
+    phoneNumberOffice: string;
+    phoneNumberMobile: string;
+    city: string;
+    subCity: string;
+    woreda: string;
+    houseNumber: string;
+    vatCertificate: string;
+    tinCertificate: string;
+    businessRegistrationCertificate: string;
+    businessLicence: string;
   }
   interface CustomAdministratorFields {
     isApproved: boolean;
