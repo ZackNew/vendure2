@@ -27,3 +27,9 @@ export const shopApiExtensions = gql`
     uploadSellerImages(input: SellerImagesInput!): String
   }
 `;
+
+export const adminApiExtensions = gql`
+  extend type Mutation {
+    changeApprovedState(value: Boolean!, sellerId: ID!): String
+  }
+`;

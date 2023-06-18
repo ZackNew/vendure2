@@ -23,7 +23,7 @@ import {
   CONNECTED_PAYMENT_METHOD_CODE,
   MULTIVENDOR_PLUGIN_OPTIONS,
 } from "../constants";
-import { MultivendorPluginOptions } from "../types";
+import { MultivendorPluginOptions, SellerType } from "../types";
 
 declare module "@vendure/core/dist/entity/custom-entity-fields" {
   interface CustomSellerFields {
@@ -38,8 +38,7 @@ declare module "@vendure/core/dist/entity/custom-entity-fields" {
     tinCertificate: string;
     businessRegistrationCertificate: string;
     businessLicence: string;
-  }
-  interface CustomAdministratorFields {
+    sellerType: SellerType;
     isApproved: boolean;
   }
 }

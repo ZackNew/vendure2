@@ -1,11 +1,14 @@
+import { ID } from "@vendure/common/lib/shared-types";
 import { createWriteStream, ReadStream } from "fs";
 import { Injectable } from "@nestjs/common";
+import { getRepository, In } from "typeorm";
 import {
   CreateAdministratorInput,
   Permission,
 } from "@vendure/common/lib/generated-types";
 import { normalizeString } from "@vendure/common/lib/normalize-string";
 import {
+  Administrator,
   AdministratorService,
   Channel,
   ChannelService,
@@ -25,10 +28,16 @@ import {
   TaxSetting,
   TransactionalConnection,
   User,
+  UserService,
 } from "@vendure/core";
 
 import { multivendorShippingEligibilityChecker } from "../config/mv-shipping-eligibility-checker";
-import { CreateAssetInput, CreateSellerInput } from "../types";
+import {
+  ChangeApprovedStateInput,
+  CreateAssetInput,
+  CreateSellerInput,
+} from "../types";
+import { AdminSellerEntity } from "../entities/seller_admin.entity";
 
 @Injectable()
 export class MultivendorService {
@@ -40,6 +49,7 @@ export class MultivendorService {
     private shippingMethodService: ShippingMethodService,
     private configService: ConfigService,
     private stockLocationService: StockLocationService,
+    private userService: UserService,
     private requestContextService: RequestContextService,
     private connection: TransactionalConnection
   ) {}
@@ -170,6 +180,8 @@ export class MultivendorService {
         businessRegistrationCertificate:
           input.seller.customFields.businessRegistrationCertificate,
         businessLicence: input.seller.customFields.businessLicence,
+        sellerType: input.seller.customFields.sellerType,
+        isApproved: false,
       },
     });
     const channel = await this.channelService.create(ctx, {
@@ -227,6 +239,15 @@ export class MultivendorService {
       password: input.seller.password,
       roleIds: [role.id],
     });
+    const repo = this.connection.getRepository(AdminSellerEntity);
+    const newAdminSeller = repo.create({
+      sellerId: seller.id,
+      administratorId: administrator.id,
+      seller: seller,
+      administrator: administrator,
+    });
+    await repo.save(newAdminSeller);
+
     return channel;
   }
 
@@ -260,5 +281,68 @@ export class MultivendorService {
     const ws = createWriteStream(`./static${filePath}`);
     readStream.pipe(ws);
     return filePath;
+  }
+
+  async changeApprovedState(ctx: RequestContext, value: boolean, sellerID: ID) {
+    try {
+      await this.sellerService.update(ctx, {
+        id: sellerID,
+        customFields: { isApproved: value },
+      });
+      const repo = this.connection.getRepository(AdminSellerEntity);
+      const seller = await repo.findOneBy({ sellerId: sellerID });
+      let admin;
+      if (seller) {
+        admin = await this.administratorService.findOneByUserId(
+          ctx,
+          seller?.administratorId,
+          ["user.roles"]
+        );
+      }
+      let user;
+      if (admin) {
+        user = await this.userService.getUserById(ctx, admin.user.id);
+      }
+      if (user) {
+        await this.roleService.update(ctx, {
+          id: user.roles[0].id,
+          permissions: [
+            Permission.CreateProduct,
+            Permission.UpdateProduct,
+            Permission.ReadProduct,
+            Permission.DeleteProduct,
+            Permission.CreateFacet,
+            Permission.UpdateFacet,
+            Permission.ReadFacet,
+            Permission.DeleteFacet,
+            Permission.CreateAsset,
+            Permission.UpdateAsset,
+            Permission.ReadAsset,
+            Permission.DeleteAsset,
+            Permission.CreateOrder,
+            Permission.ReadOrder,
+            Permission.UpdateOrder,
+            Permission.DeleteOrder,
+            Permission.ReadCustomer,
+            Permission.ReadPaymentMethod,
+            Permission.ReadShippingMethod,
+            Permission.ReadPromotion,
+            Permission.ReadCountry,
+            Permission.ReadZone,
+            Permission.CreateCustomer,
+            Permission.UpdateCustomer,
+            Permission.DeleteCustomer,
+            Permission.CreateTag,
+            Permission.ReadTag,
+            Permission.UpdateTag,
+            Permission.DeleteTag,
+            Permission.CreateStockLocation,
+            Permission.ReadStockLocation,
+            Permission.DeleteStockLocation,
+            Permission.UpdateStockLocation,
+          ],
+        });
+      }
+    } catch (error) {}
   }
 }

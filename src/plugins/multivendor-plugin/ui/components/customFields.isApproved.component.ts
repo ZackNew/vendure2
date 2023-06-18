@@ -1,28 +1,75 @@
-import { Component } from "@angular/core";
+import { Component, AfterViewInit, OnInit } from "@angular/core";
 import { FormControl } from "@angular/forms";
 import { Apollo, gql } from "apollo-angular";
+import { ActivatedRoute } from "@angular/router";
 
 import {
   IntCustomFieldConfig,
   SharedModule,
   FormInputComponent,
   registerFormInputComponent,
+  NotificationService,
 } from "@vendure/admin-ui/core";
 
 @Component({
   template: `
-    <input #isApproved type="text" (change)="isApprovedToggled($event)" />
+    <input
+      #isApproved
+      type="checkbox"
+      (change)="isApprovedToggled($event)"
+      style="width:4%"
+      [(ngModel)]="model"
+    />
   `,
 })
 export class IsApprovedComponent
-  implements FormInputComponent<IntCustomFieldConfig>
+  implements FormInputComponent<IntCustomFieldConfig>, OnInit
 {
   readonly: boolean;
   config: IntCustomFieldConfig;
   formControl: FormControl;
-  constructor(private apollo: Apollo) {}
+  id: String;
+  model: boolean;
+  constructor(
+    private apollo: Apollo,
+    private notificationService: NotificationService,
+    private route: ActivatedRoute
+  ) {
+    this.route.params.subscribe((params) => {
+      this.id = params["id"];
+    });
+  }
+  ngOnInit(): void {
+    this.model = this.formControl.value;
+  }
 
   async isApprovedToggled(event: any) {
-    console.log("this data", event);
+    this.formControl.setValue(event.target.checked);
+    this.formControl.markAsDirty();
+    var ChangeAdminsApprovedState = gql`
+      mutation ChangeAdminsApprovedState($value: Boolean!, $sellerId: ID!) {
+        changeApprovedState(value: $value, sellerId: $sellerId)
+      }
+    `;
+
+    try {
+      var reply = await this.apollo
+        .mutate<any>({
+          mutation: ChangeAdminsApprovedState,
+          variables: {
+            value: event.target.checked,
+            sellerId: Number(this.id),
+          },
+          context: {
+            useMultipart: true,
+          },
+        })
+        .toPromise();
+      if (event.target.checked)
+        this.notificationService.success(`Approved Successully`);
+      else this.notificationService.success(`Approval Revoked Successfully`);
+    } catch (err) {
+      this.notificationService.error(`Couldn't Finish Action`);
+    }
   }
 }

@@ -1,6 +1,12 @@
+import { ID } from "@vendure/common/lib/shared-types";
+
 export interface MultivendorPluginOptions {
   platformFeePercent: number;
   platformFeeSKU: string;
+}
+export enum SellerType {
+  MARKUP = "markup",
+  SUBSCRIPTION = "subscription",
 }
 interface SellerCustomFields {
   phoneNumberOffice: string;
@@ -13,6 +19,8 @@ interface SellerCustomFields {
   tinCertificate: string;
   businessRegistrationCertificate: string;
   businessLicence: string;
+  sellerType: SellerType;
+  isApproved: boolean;
 }
 
 export interface CreateSellerInput {
@@ -26,4 +34,8 @@ export type CreateAssetInput = {
   file: any;
   tags?: string;
   customFields?: JSON;
+};
+export type ChangeApprovedStateInput = {
+  value: Boolean;
+  sellerId: ID;
 };

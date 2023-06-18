@@ -10,6 +10,7 @@ import { AdminUiPlugin } from "@vendure/admin-ui-plugin";
 import "dotenv/config";
 import path from "path";
 import { MultivendorPlugin } from "./plugins/multivendor-plugin/multivendor.plugin";
+import { compileUiExtensions } from "@vendure/ui-devkit/compiler";
 
 const IS_DEV = process.env.APP_ENV === "dev";
 
@@ -100,6 +101,10 @@ export const config: VendureConfig = {
         loginImageUrl:
           "https://cdn.pixabay.com/photo/2020/02/14/18/05/ecommerce-4849055_1280.jpg",
       },
+      app: compileUiExtensions({
+        outputPath: path.join(__dirname, "admin-ui"),
+        extensions: [MultivendorPlugin.uiExtensions],
+      }),
     }),
     MultivendorPlugin,
   ],

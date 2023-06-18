@@ -14,7 +14,7 @@ import {
 } from "@vendure/core";
 
 import { AdminUiExtension } from "@vendure/ui-devkit/compiler";
-import { shopApiExtensions } from "./api/api-extensions";
+import { adminApiExtensions, shopApiExtensions } from "./api/api-extensions";
 import { MultivendorResolver } from "./api/mv.resolver";
 import { multivendorOrderProcess } from "./config/mv-order-process";
 import { MultivendorSellerStrategy } from "./config/mv-order-seller-strategy";
@@ -27,6 +27,8 @@ import {
 } from "./constants";
 import { MultivendorService } from "./service/mv.service";
 import { MultivendorPluginOptions } from "./types";
+import { MultivendorAdminResolver } from "./api/mv.admin.resolver";
+import { AdminSellerEntity } from "./entities/seller_admin.entity";
 // import { CustomAuthenticationStrategy } from "./api/custom-authentication-strategy";
 // import "./customTypes";
 
@@ -131,6 +133,7 @@ import { MultivendorPluginOptions } from "./types";
  */
 @VendurePlugin({
   imports: [PluginCommonModule],
+  entities: [AdminSellerEntity],
   configuration: (config) => {
     // config.authOptions.adminAuthenticationStrategy = [
     //   new CustomAuthenticationStrategy(),
@@ -282,22 +285,33 @@ import { MultivendorPluginOptions } from "./types";
         type: "string",
         public: false,
         ui: { tab: "Legal Documents" },
+      },
+      {
+        name: "sellerType",
+        label: [{ languageCode: LanguageCode.en, value: "Seller type" }],
+        description: [
+          {
+            languageCode: LanguageCode.en,
+            value: "Seller's choosen type",
+          },
+        ],
+        type: "string",
+        public: false,
+      },
+      {
+        name: "isApproved",
+        label: [{ languageCode: LanguageCode.en, value: "Approved" }],
+        description: [
+          {
+            languageCode: LanguageCode.en,
+            value: "Is this admin approved by Superadmin",
+          },
+        ],
+        type: "boolean",
+        public: false,
+        ui: { component: "is-approved" },
       }
     );
-    config.customFields.Administrator.push({
-      name: "isApproved",
-      label: [{ languageCode: LanguageCode.en, value: "Approved" }],
-      description: [
-        {
-          languageCode: LanguageCode.en,
-          value: "Is this admin approved by Superadmin",
-        },
-      ],
-      type: "boolean",
-      public: false,
-      defaultValue: false,
-      ui: { component: "is-approved" },
-    });
     config.paymentOptions.paymentMethodHandlers.push(
       multivendorPaymentMethodHandler
     );
@@ -320,6 +334,10 @@ import { MultivendorPluginOptions } from "./types";
   shopApiExtensions: {
     schema: shopApiExtensions,
     resolvers: [MultivendorResolver],
+  },
+  adminApiExtensions: {
+    schema: adminApiExtensions,
+    resolvers: [MultivendorAdminResolver],
   },
   providers: [
     MultivendorService,

@@ -2,7 +2,6 @@ import { NgModule } from "@angular/core";
 import {
   SharedModule,
   registerFormInputComponent,
-  RichTextFormInputComponent,
 } from "@vendure/admin-ui/core";
 import { IsApprovedComponent } from "./components/customFields.isApproved.component";
 
@@ -10,5 +9,6 @@ import { IsApprovedComponent } from "./components/customFields.isApproved.compon
   imports: [SharedModule],
   declarations: [IsApprovedComponent],
   providers: [registerFormInputComponent("is-approved", IsApprovedComponent)],
+  exports: [],
 })
 export class AdminSellerSharedExtensionModule {}
