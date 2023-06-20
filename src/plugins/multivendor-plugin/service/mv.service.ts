@@ -165,6 +165,12 @@ export class MultivendorService {
   ) {
     const defaultChannel = await this.channelService.getDefaultChannel(ctx);
     const shopCode = normalizeString(input.shopName, "-");
+    let isApproved;
+    if (input.seller.customFields.sellerType === "subscription") {
+      isApproved = true;
+    } else {
+      isApproved = false;
+    }
     const seller = await this.sellerService.create(ctx, {
       name: input.shopName,
       customFields: {
@@ -181,9 +187,12 @@ export class MultivendorService {
           input.seller.customFields.businessRegistrationCertificate,
         businessLicence: input.seller.customFields.businessLicence,
         sellerType: input.seller.customFields.sellerType,
-        isApproved: false,
+        isApproved: isApproved,
+        tinNumber: input.seller.customFields.tinNumber,
       },
     });
+    console.log("cuuuuuuuunt", input.seller.customFields.tinNumber);
+
     const channel = await this.channelService.create(ctx, {
       code: shopCode,
       sellerId: seller.id,
@@ -204,33 +213,51 @@ export class MultivendorService {
       superAdminRole.id,
       channel.id
     );
+    let permissions: Array<Permission>;
+    if (input.seller.customFields.sellerType === "subscription") {
+      permissions = [
+        Permission.CreateProduct,
+        Permission.UpdateProduct,
+        Permission.ReadProduct,
+        Permission.DeleteProduct,
+        Permission.CreateFacet,
+        Permission.UpdateFacet,
+        Permission.ReadFacet,
+        Permission.DeleteFacet,
+        Permission.CreateAsset,
+        Permission.UpdateAsset,
+        Permission.ReadAsset,
+        Permission.DeleteAsset,
+        Permission.CreateOrder,
+        Permission.ReadOrder,
+        Permission.UpdateOrder,
+        Permission.DeleteOrder,
+        Permission.ReadCustomer,
+        Permission.ReadPaymentMethod,
+        Permission.ReadShippingMethod,
+        Permission.ReadPromotion,
+        Permission.ReadCountry,
+        Permission.ReadZone,
+        Permission.CreateCustomer,
+        Permission.UpdateCustomer,
+        Permission.DeleteCustomer,
+        Permission.CreateTag,
+        Permission.ReadTag,
+        Permission.UpdateTag,
+        Permission.DeleteTag,
+        Permission.CreateStockLocation,
+        Permission.ReadStockLocation,
+        Permission.DeleteStockLocation,
+        Permission.UpdateStockLocation,
+      ];
+    } else {
+      permissions = [];
+    }
     const role = await this.roleService.create(ctx, {
       code: `${shopCode}-admin`,
       channelIds: [channel.id],
       description: `Administrator of ${input.shopName}`,
-      permissions: [
-        // Permission.CreateCatalog,
-        // Permission.UpdateCatalog,
-        // Permission.ReadCatalog,
-        // Permission.DeleteCatalog,
-        // Permission.CreateOrder,
-        // Permission.ReadOrder,
-        // Permission.UpdateOrder,
-        // Permission.DeleteOrder,
-        // Permission.ReadCustomer,
-        // Permission.ReadPaymentMethod,
-        // Permission.ReadShippingMethod,
-        // Permission.ReadPromotion,
-        // Permission.ReadCountry,
-        // Permission.ReadZone,
-        // Permission.CreateCustomer,
-        // Permission.UpdateCustomer,
-        // Permission.DeleteCustomer,
-        // Permission.CreateTag,
-        // Permission.ReadTag,
-        // Permission.UpdateTag,
-        // Permission.DeleteTag,
-      ],
+      permissions: permissions,
     });
     const administrator = await this.administratorService.create(ctx, {
       firstName: input.seller.firstName,

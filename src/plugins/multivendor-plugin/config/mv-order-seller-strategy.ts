@@ -40,6 +40,7 @@ declare module "@vendure/core/dist/entity/custom-entity-fields" {
     businessLicence: string;
     sellerType: SellerType;
     isApproved: boolean;
+    tinNumber: string;
   }
 }
 

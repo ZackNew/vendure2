@@ -21,6 +21,7 @@ interface SellerCustomFields {
   businessLicence: string;
   sellerType: SellerType;
   isApproved: boolean;
+  tinNumber: string;
 }
 
 export interface CreateSellerInput {

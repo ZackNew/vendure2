@@ -231,7 +231,9 @@ import { AdminSellerEntity } from "./entities/seller_admin.entity";
       },
       {
         name: "vatCertificate",
-        label: [{ languageCode: LanguageCode.en, value: "Vat Certificate" }],
+        label: [
+          { languageCode: LanguageCode.en, value: "Vat Certificate (Markup)" },
+        ],
         description: [
           {
             languageCode: LanguageCode.en,
@@ -240,11 +242,13 @@ import { AdminSellerEntity } from "./entities/seller_admin.entity";
         ],
         type: "string",
         public: false,
-        ui: { tab: "Legal Documents" },
+        ui: { component: "legal-documents", tab: "Legal Documents" },
       },
       {
         name: "tinCertificate",
-        label: [{ languageCode: LanguageCode.en, value: "Tin Certificate" }],
+        label: [
+          { languageCode: LanguageCode.en, value: "Tin Certificate (Markup)" },
+        ],
         description: [
           {
             languageCode: LanguageCode.en,
@@ -253,14 +257,14 @@ import { AdminSellerEntity } from "./entities/seller_admin.entity";
         ],
         type: "string",
         public: false,
-        ui: { tab: "Legal Documents" },
+        ui: { component: "legal-documents", tab: "Legal Documents" },
       },
       {
         name: "businessRegistrationCertificate",
         label: [
           {
             languageCode: LanguageCode.en,
-            value: "Business Registration Certificate",
+            value: "Business Registration Certificate (Markup)",
           },
         ],
         description: [
@@ -271,11 +275,13 @@ import { AdminSellerEntity } from "./entities/seller_admin.entity";
         ],
         type: "string",
         public: false,
-        ui: { tab: "Legal Documents" },
+        ui: { component: "legal-documents", tab: "Legal Documents" },
       },
       {
         name: "businessLicence",
-        label: [{ languageCode: LanguageCode.en, value: "Business Licence" }],
+        label: [
+          { languageCode: LanguageCode.en, value: "Business Licence (Markup)" },
+        ],
         description: [
           {
             languageCode: LanguageCode.en,
@@ -284,7 +290,7 @@ import { AdminSellerEntity } from "./entities/seller_admin.entity";
         ],
         type: "string",
         public: false,
-        ui: { tab: "Legal Documents" },
+        ui: { component: "legal-documents", tab: "Legal Documents" },
       },
       {
         name: "sellerType",
@@ -297,6 +303,7 @@ import { AdminSellerEntity } from "./entities/seller_admin.entity";
         ],
         type: "string",
         public: false,
+        ui: { component: "seller-type" },
       },
       {
         name: "isApproved",
@@ -310,6 +317,20 @@ import { AdminSellerEntity } from "./entities/seller_admin.entity";
         type: "boolean",
         public: false,
         ui: { component: "is-approved" },
+      },
+      {
+        name: "tinNumber",
+        label: [
+          { languageCode: LanguageCode.en, value: "Tin Number (Subscriber)" },
+        ],
+        description: [
+          {
+            languageCode: LanguageCode.en,
+            value: "Tin Number",
+          },
+        ],
+        type: "string",
+        public: false,
       }
     );
     config.paymentOptions.paymentMethodHandlers.push(

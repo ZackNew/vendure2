@@ -5,9 +5,7 @@ import { ActivatedRoute } from "@angular/router";
 
 import {
   IntCustomFieldConfig,
-  SharedModule,
   FormInputComponent,
-  registerFormInputComponent,
   NotificationService,
 } from "@vendure/admin-ui/core";
 
