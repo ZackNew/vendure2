@@ -191,7 +191,6 @@ export class MultivendorService {
         tinNumber: input.seller.customFields.tinNumber,
       },
     });
-    console.log("cuuuuuuuunt", input.seller.customFields.tinNumber);
 
     const channel = await this.channelService.create(ctx, {
       code: shopCode,
@@ -331,9 +330,9 @@ export class MultivendorService {
         user = await this.userService.getUserById(ctx, admin.user.id);
       }
       if (user) {
-        await this.roleService.update(ctx, {
-          id: user.roles[0].id,
-          permissions: [
+        let permissions;
+        if (value === true) {
+          permissions = [
             Permission.CreateProduct,
             Permission.UpdateProduct,
             Permission.ReadProduct,
@@ -367,7 +366,13 @@ export class MultivendorService {
             Permission.ReadStockLocation,
             Permission.DeleteStockLocation,
             Permission.UpdateStockLocation,
-          ],
+          ];
+        } else if (value === false) {
+          permissions = [];
+        }
+        await this.roleService.update(ctx, {
+          id: user.roles[0].id,
+          permissions: permissions,
         });
       }
     } catch (error) {}

@@ -74,9 +74,6 @@ export class CustomAuthenticationStrategy
       ctx,
       user.id
     );
-    if (adminUser && !adminUser?.customFields.isApproved) {
-      return false;
-    }
     const passwordMatch = await this.verifyUserPassword(
       ctx,
       user.id,

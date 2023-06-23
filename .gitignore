@@ -1,6 +1,5 @@
 node_modules
 dist
-src/admin-ui
 static/assets
 static/email/test-emails
 src/migrations/
