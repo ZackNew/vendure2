@@ -15,11 +15,12 @@
     "migration:revert": "ts-node migration revert"
   },
   "dependencies": {
-    "@vendure/admin-ui-plugin": "2.0.1",
-    "@vendure/asset-server-plugin": "2.0.1",
-    "@vendure/core": "2.0.1",
-    "@vendure/email-plugin": "2.0.1",
-    "@vendure/ui-devkit": "^2.0.1",
+    "@types/mysql": "^2.15.21",
+    "@vendure/admin-ui-plugin": "2.0.2",
+    "@vendure/asset-server-plugin": "2.0.2",
+    "@vendure/core": "2.0.2",
+    "@vendure/email-plugin": "2.0.2",
+    "@vendure/ui-devkit": "^2.0.2",
     "dotenv": "16.1.4",
     "mysql": "2.18.1",
     "typescript": "4.9.5"
